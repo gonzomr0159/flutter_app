@@ -15,9 +15,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Welcome to flutter',
-      // home: RondomWords(),
-      // home: AddUser('emayu', 17),
-      home: UserList(),
+      home: Scaffold(
+        appBar: AppBar(title: Text('User List')),
+        body: UserList(),
+        floatingActionButton: TextButton(onPressed: null, child: Text('button')),
+      ),
     );
   }
 }

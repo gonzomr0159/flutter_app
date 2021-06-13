@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+CollectionReference getUsersCollection() {
+  return FirebaseFirestore.instance.collection('users');
+}
+
 class AddUser extends StatelessWidget {
   final String name;
   final int age;
@@ -10,9 +14,8 @@ class AddUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    
-    Future<void> addUser() {
+    Future<void> _addUser() {
+      final users = getUsersCollection();
       return users
         .add({
           'name': name,
@@ -22,21 +25,28 @@ class AddUser extends StatelessWidget {
         .catchError((error) => print("Failed to add user: $error"));
     }
 
-    return TextButton(onPressed: addUser, child: Text("Add User"));
+    return TextButton(onPressed: _addUser, child: Text("Add User"));
   }
 }
 
 class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    Future<QuerySnapshot> getUsers() {
+    Future<QuerySnapshot> _getUsers() {
+      final users = getUsersCollection();
       return users.get();
     }
 
     return FutureBuilder(
-      future: getUsers(),
+      future: _getUsers(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return CircularProgressIndicator();
+        }
+
+        if (snapshot.hasError) {
+          return Text('Failed to get user list: ${snapshot.error}');
+        }
+
         if (snapshot.hasData) {
           final List userList = snapshot.data!.docs.toList();
           return ListView.builder(
@@ -45,8 +55,6 @@ class UserList extends StatelessWidget {
               return Text(userList[index]["name"]);
             }
           );
-        } else if (snapshot.hasError) {
-          return Text('Failed to get user list: ${snapshot.error}');
         } else {
           return Text('no data');
         }
