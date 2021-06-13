@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-// void main() => runApp(MyApp());
+import 'users.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -14,7 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Welcome to flutter',
-      home: RondomWords(),
+      // home: RondomWords(),
+      // home: AddUser('emayu', 17),
+      home: UserList(),
     );
   }
 }
